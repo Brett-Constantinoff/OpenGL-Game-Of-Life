@@ -16,6 +16,11 @@
 
 #define CUBE_INDEX_COUNT 36
 
+#define PLATFORM_CUBES 10000
+#define GAME_OF_LIFE_CUBES 10000
+
+#define MAX_CUBES 20000
+
 class GameOfLifeLayer : public Layer{
     public:
         GameOfLifeLayer();
@@ -35,12 +40,19 @@ class GameOfLifeLayer : public Layer{
         uint32_t m_vao;
         uint32_t m_vbo;
         uint32_t m_ibo;
+        uint32_t m_transformBuffer;
+        uint32_t m_colourBuffer;
+
+        glm::mat4* m_transforms;
+        glm::vec3* m_colours;
+
         std::stringstream m_frameRate;
+        std::stringstream m_camPosition;
 
         glm::mat4 m_projection;
         glm::mat4 m_view;
 
-        glm::vec3 m_quadColour;
+        uint32_t m_renderAmount = 0;
 
         
 };  
