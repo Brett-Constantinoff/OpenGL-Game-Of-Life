@@ -1,7 +1,6 @@
 #include "GameOfLifeLayer.h"
 
 GameOfLifeLayer::GameOfLifeLayer(){
-
 }
 
 GameOfLifeLayer::~GameOfLifeLayer(){
@@ -12,7 +11,6 @@ GameOfLifeLayer::~GameOfLifeLayer(){
     glDeleteVertexArrays(1, &m_vao);
 	glDeleteBuffers(1, &m_vbo);
 	glDeleteBuffers(1, &m_ibo);
-
 }
 
 void GameOfLifeLayer::onAttach(){
@@ -30,23 +28,53 @@ void GameOfLifeLayer::onAttach(){
 	glGenVertexArrays(1, &m_vao);
 	glBindVertexArray(m_vao);
 
-	float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f,
-		 0.5f,  0.5f, 0.0f,
-		-0.5f,  0.5f, 0.0f
-	};
+    float vertexData[] = {
+       //positions         
+       0.0f, 0.0f, 0.0f,   
+       1.0f, 0.0f, 0.0f,   
+       1.0f, 1.0f, 0.0f,   
+       0.0f, 1.0f, 0.0f,   
+
+       1.0f, 0.0f, 0.0f,    
+       1.0f, 0.0f, 1.0f,   
+       1.0f, 1.0f, 1.0f,   
+       1.0f, 1.0f, 0.0f,   
+
+       0.0f, 0.0f, 1.0f,   
+       0.0f, 1.0f, 1.0f,   
+       1.0f, 1.0f, 1.0f,   
+       1.0f, 0.0f, 1.0f,   
+
+       0.0f, 0.0f, 0.0f,   
+       0.0f, 1.0f, 0.0f,   
+       0.0f, 1.0f, 1.0f,   
+       0.0f, 0.0f, 1.0f,   
+
+       0.0f, 1.0f, 0.0f,   
+       1.0f, 1.0f, 0.0f,    
+       0.0f, 1.0f, 1.0f,    
+       1.0f, 1.0f, 1.0f,   
+
+       0.0f, 0.0f, 1.0f,    
+       0.0f, 1.0f, 1.0f,    
+       1.0f, 1.0f, 1.0f,    
+       1.0f, 0.0f, 1.0f,    
+    };
 
 	glGenBuffers(1, &m_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
 	uint32_t indices[] = {
-         0, 1, 2,
-         2, 3, 0 
+        0,  1,  2,      0,  2,  3,
+        4,  5,  6,      4,  6,  7,   
+        8,  9,  10,     8,  10, 11,  
+        12, 13, 14,     12, 14, 15, 
+        16, 17, 18,     17, 18, 19,  
+        20, 21, 22,     21, 22, 23
     };
 
 	glGenBuffers(1, &m_ibo);
@@ -58,7 +86,6 @@ void GameOfLifeLayer::onAttach(){
 }
 
 void GameOfLifeLayer::onDetach(){
-
 }
 
 void GameOfLifeLayer::onUpdate(float dt, Window* win){
@@ -66,11 +93,13 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win){
 
 	m_projection = glm::perspective(glm::radians(45.0f), static_cast<float>(win->getWidth()) / static_cast<float>(win->getHeight()), 0.1f, 100.0f);
 	m_view = *m_camera->getView();
-    glClearColor(0.25f, 0.25f, 0.25f, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	m_frameRate.str("");
 	m_frameRate << ImGui::GetIO().Framerate << " FPS";
+
+    glClearColor(0.25f, 0.25f, 0.25f, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 };
 
 void GameOfLifeLayer::onRender(){
@@ -78,11 +107,10 @@ void GameOfLifeLayer::onRender(){
 
 	m_shader->setMat4("uProjection", m_projection);
 	m_shader->setMat4("uView", m_view);
-
 	m_shader->setVec3("uColour", m_quadColour);
 
     glBindVertexArray(m_vao);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, CUBE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
 	m_textRenderer->render(m_frameRate.str(), {0.0f, 30.0f}, 0.5f, {0.0f, 1.0f, 0.0f}, false);
 }
 

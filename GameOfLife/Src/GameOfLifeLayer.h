@@ -14,6 +14,8 @@
 #include <iostream>
 #include <sstream>
 
+#define CUBE_INDEX_COUNT 36
+
 class GameOfLifeLayer : public Layer{
     public:
         GameOfLifeLayer();
