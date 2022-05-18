@@ -8,8 +8,9 @@
 
 class Camera{
     public:
-        Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up);
+        Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up, float speed);
         void move(GLFWwindow **win, float dt);
+        glm::vec3* getPos();
         glm::mat4* getView( void );
 
     private:
@@ -17,6 +18,7 @@ class Camera{
         glm::vec3 m_position;
         glm::vec3 m_front;
         glm::vec3 m_up;
+        float m_speed;
         float m_yaw = -90.0f;
         float m_pitch = 0.0f;
 

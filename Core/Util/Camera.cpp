@@ -1,8 +1,8 @@
 #include "Camera.h"
 
 
-Camera::Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up): 
-    m_position{position}, m_front{front}, m_up{up}{
+Camera::Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up, float speed): 
+    m_position{position}, m_front{front}, m_up{up}, m_speed{speed}{
 };
 
 void Camera::move(GLFWwindow **win, float dt){
@@ -11,7 +11,7 @@ void Camera::move(GLFWwindow **win, float dt){
     m_front.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
     m_front = glm::normalize(m_front);
 
-    const float cameraSpeed = 3.0f * dt;
+    const float cameraSpeed = m_speed * dt;
 
     if (glfwGetKey(*win, GLFW_KEY_W) == GLFW_PRESS)
     {
@@ -45,6 +45,10 @@ void Camera::move(GLFWwindow **win, float dt){
     {
         m_pitch -= 2.0f;
     }
+}
+
+glm::vec3* Camera::getPos(){
+    return &m_position;
 }
 
 glm::mat4 *Camera::getView(){
