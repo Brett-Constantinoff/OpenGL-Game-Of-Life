@@ -11,6 +11,7 @@ class Camera{
         Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up, float speed);
         void move(GLFWwindow **win, float dt);
         glm::vec3* getPos();
+        glm::vec3* getFront();
         glm::mat4* getView( void );
 
     private:
