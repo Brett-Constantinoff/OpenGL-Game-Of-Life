@@ -21,7 +21,7 @@ void GameOfLifeLayer::onAttach(){
 	m_textShader = new Shader("GameOfLife/Assets/glsl/textShader.glsl");
 
 	m_textRenderer = new TextRenderer(m_textShader, 1080, 720);
-	m_textRenderer->loadFont("GameOfLife/Assets/fonts/OCRAEXT.TTF", 24);
+	m_textRenderer->loadFont("GameOfLife/Assets/fonts/OpenSans-Regular.TTF", 24);
 
 	m_camera = new Camera({50.0f, 53.0f, 165.2f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, 10.0f);
 
