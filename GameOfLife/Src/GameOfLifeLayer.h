@@ -8,6 +8,9 @@
 #include "../../Core/Util/Shader.h"
 #include "../../Core/Util/TextRenderer.h"
 #include "../../Core/Util/Camera.h"
+#include "../../Core/Util/VertexBuffer.h"
+#include "../../Core/Util/VertexArray.h"
+
 #include "../../Core/Libs/glm/glm.hpp"
 #include "../../Core/Libs/glm/gtc/matrix_transform.hpp"
 #include "../../Core/Libs/glm/gtc/type_ptr.hpp"
@@ -37,11 +40,10 @@ class GameOfLifeLayer : public Layer{
         Shader* m_textShader;
         Camera* m_camera;
         TextRenderer* m_textRenderer;
-        uint32_t m_vao;
-        uint32_t m_vbo;
-        uint32_t m_ibo;
-        uint32_t m_transformBuffer;
-        uint32_t m_colourBuffer;
+        VertexArray* m_vao;
+        VertexBuffer* m_vbo;
+        VertexBuffer* m_transformBuffer;
+        VertexBuffer* m_colourBuffer;
 
         glm::mat4* m_transforms;
         glm::vec3* m_colours;
