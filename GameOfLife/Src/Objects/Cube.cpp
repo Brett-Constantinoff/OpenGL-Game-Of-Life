@@ -115,3 +115,13 @@ void Cube::render()
 	glDrawElementsInstanced(GL_TRIANGLES, CUBE_INDEX_COUNT, GL_UNSIGNED_INT, 0, MAX_CUBES);
 	m_vao->unBind();
 }
+
+glm::mat4* Cube::getTransforms()
+{
+    return &m_transforms[0];
+}
+
+glm::vec3* Cube::getColours()
+{
+    return &m_colours[0];
+}

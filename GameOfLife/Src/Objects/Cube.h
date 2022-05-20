@@ -16,6 +16,9 @@ class Cube : public RenderObject{
         virtual void init() override;
         virtual void update(float dt) override;
         virtual void render() override;
+
+        glm::mat4* getTransforms();
+        glm::vec3* getColours();
     
     private:
         glm::mat4* m_transforms;

@@ -26,6 +26,14 @@ class GameOfLifeLayer : public Layer{
         virtual void onRender() override; 
         virtual void onRenderImgui() override;
 
+        void getMouseRay(
+            glm::vec2 mouseCoord,
+            glm::vec2 screenDim, 
+            glm::mat4 projection, 
+            glm::mat4 view, 
+            glm::vec3& rayOut, 
+            glm::vec3& rayOrigin);
+
     private:
         Shader* m_shader;
         Shader* m_textShader;

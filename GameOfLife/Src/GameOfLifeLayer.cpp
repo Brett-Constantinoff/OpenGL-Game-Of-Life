@@ -47,13 +47,26 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win){
 	m_shader->setMat4("uProjection", m_projection);
 	m_shader->setMat4("uView", m_view);
 
+	double mouseX;
+	double mouseY;
+	glm::vec3 rayOut;
+	glm::vec3 rayOrigin;
+	glfwGetCursorPos(*win->getContext(), &mouseX,  &mouseY);
+	getMouseRay(
+		{mouseX, mouseY},
+		{win->getWidth(), win->getHeight()},
+		m_projection, 
+		m_view, 
+		rayOut, 
+		rayOrigin
+	);
+
     glClearColor(0.25f, 0.25f, 0.25f, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 };
 
 void GameOfLifeLayer::onRender(){
-
 
 	m_cube->render();
 
@@ -70,4 +83,47 @@ void GameOfLifeLayer::onRenderImgui(){
 		ImGui::EndMainMenuBar();
 	}
 
+}
+
+void GameOfLifeLayer::getMouseRay(
+	glm::vec2 mouseCoord,
+	glm::vec2 screenDim, 
+	glm::mat4 projection, 
+	glm::mat4 view, 
+	glm::vec3& rayOut, 
+	glm::vec3& rayOrigin)
+{
+	//sreen coord to NDC
+	glm::vec4 rayStart{
+		(static_cast<float>(mouseCoord.x) / static_cast<float>(screenDim.x) - 0.5f) * 2.0f,
+		(static_cast<float>(mouseCoord.y) / static_cast<float>(screenDim.y) - 0.5f) * 2.0f,
+		-1.0f, 
+		1.0f
+	};
+
+	glm::vec4 rayEnd{
+		rayStart.x, 
+		rayStart.y, 
+		0.0f, 
+		1.0f
+	};
+
+	glm::mat4 inverseProjection = glm::inverse(projection);
+	glm::mat4 inverseView = glm::inverse(view);
+
+	//cam space to world space
+	glm::vec4 rayStartCamSpace = inverseProjection * rayStart;
+	rayStartCamSpace /= rayStartCamSpace.w;
+	glm::vec4 rayStartWorldSpace = inverseView * rayStartCamSpace;
+	rayStartWorldSpace /= rayStartWorldSpace.w;
+
+	glm::vec4 rayEndCamSpace = inverseProjection * rayEnd;
+	rayEndCamSpace /= rayEndCamSpace.w;
+	glm::vec4 rayEndWorldSpace = inverseView * rayEndCamSpace;
+	rayEndWorldSpace /= rayEndWorldSpace.w;
+
+	glm::vec3 rayDir = rayEndWorldSpace - rayStartWorldSpace;
+
+	rayDir = glm::normalize(rayDir);
+	rayOut = glm::vec3(rayStartWorldSpace);
 }
