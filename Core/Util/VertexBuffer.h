@@ -12,6 +12,7 @@ class VertexBuffer : public Buffer
         
         virtual void bind();
         virtual void setData(uint32_t byteSize, void* data, uint32_t mode);
+        virtual void setSubData(uint32_t offset, int32_t byteSize, void* data);
 
 
 };

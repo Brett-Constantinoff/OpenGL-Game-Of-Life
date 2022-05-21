@@ -20,3 +20,8 @@ void VertexBuffer::setData(uint32_t byteSize, void* data, uint32_t mode)
     glBufferData(m_type, byteSize, data, mode);
 }
 
+void VertexBuffer::setSubData(uint32_t offset, int32_t byteSize, void* data)
+{
+    glBufferSubData(m_type, offset, byteSize, data);
+}
+
