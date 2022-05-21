@@ -26,13 +26,9 @@ class GameOfLifeLayer : public Layer{
         virtual void onRender() override; 
         virtual void onRenderImgui() override;
 
-        void getMouseRay(
-            glm::vec2 mouseCoord,
-            glm::vec2 screenDim, 
-            glm::mat4 projection, 
-            glm::mat4 view, 
-            glm::vec3& rayOut, 
-            glm::vec3& rayOrigin);
+        void getMouseRay(Window* win, glm::mat4 projection, glm::mat4 view, glm::vec3& ray, glm::vec3& rayOrigin);
+        bool rayIntersect(glm::vec3 rayDir, glm::vec3 rayOrigin, glm::mat4 transform, glm::vec3 min, glm::vec3 max);
+        bool perpPlaneIntersect(glm::vec3 axis, glm::vec3 delta, glm::vec3 rayDir, glm::vec3 min, glm::vec3 max, float& tMin, float& tMax);
 
     private:
         Shader* m_shader;
@@ -47,6 +43,8 @@ class GameOfLifeLayer : public Layer{
         glm::mat4 m_view;
 
         Cube* m_cube;
+        uint32_t m_previousIntersection = 0;
+        uint32_t m_currentIntersection = 0;
 
         
 };  

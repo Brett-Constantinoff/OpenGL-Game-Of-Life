@@ -18,7 +18,7 @@ void Cube::init()
     m_vao = new VertexArray();
     m_vao->bind();
 
-    float vertexData[] = {
+    std::vector<float> vertexData = {
        //positions         
        0.0f, 0.0f, 0.0f,   
        1.0f, 0.0f, 0.0f,   
@@ -51,12 +51,15 @@ void Cube::init()
        1.0f, 0.0f, 1.0f,    
     };
 
+
+    calculateMinMax(vertexData, m_min, m_max);
+
     VertexBuffer vbo(GL_ARRAY_BUFFER);
     vbo.bind();
-	vbo.setData(sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+	vbo.setData(vertexData.size() * sizeof(float), &vertexData[0], GL_STATIC_DRAW);
     m_vao->setAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 
-    uint32_t indices[] = {
+    std::vector<uint32_t> indices = {
         0,  1,  2,      0,  2,  3,
         4,  5,  6,      4,  6,  7,   
         8,  9,  10,     8,  10, 11,  
@@ -67,7 +70,7 @@ void Cube::init()
 
     VertexBuffer ibo(GL_ELEMENT_ARRAY_BUFFER);
 	ibo.bind();
-	ibo.setData(sizeof(indices), indices, GL_STATIC_DRAW);
+	ibo.setData(indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
 
 	m_transforms = new glm::mat4[MAX_CUBES];
 	m_colours = new glm::vec3[MAX_CUBES];
@@ -88,7 +91,7 @@ void Cube::init()
 
     m_colourVbo = new VertexBuffer(GL_ARRAY_BUFFER);
 	m_colourVbo->bind();
-	m_colourVbo->setData(sizeof(glm::vec3) * MAX_CUBES, m_colours, GL_STATIC_DRAW);
+	m_colourVbo->setData(sizeof(glm::vec3) * MAX_CUBES, m_colours, GL_DYNAMIC_DRAW);
 	m_vao->setAttribPointer(1, 3 , GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0, true);
 
     VertexBuffer transformVbo(GL_ARRAY_BUFFER);
@@ -112,6 +115,8 @@ void Cube::update(float dt)
 void Cube::render()
 {
     m_vao->bind();
+    m_colourVbo->bind();
+    m_colourVbo->setData(sizeof(glm::vec3) * MAX_CUBES, m_colours, GL_DYNAMIC_DRAW);
 	glDrawElementsInstanced(GL_TRIANGLES, CUBE_INDEX_COUNT, GL_UNSIGNED_INT, 0, MAX_CUBES);
 	m_vao->unBind();
 }

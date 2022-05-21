@@ -4,6 +4,7 @@
 #include "RenderObject.h"
 #include <vector>
 #include <iostream>
+#include <limits>
 
 #define CUBE_INDEX_COUNT 36
 #define MAX_CUBES 10000
@@ -24,8 +25,6 @@ class Cube : public RenderObject{
         glm::mat4* m_transforms;
         glm::vec3* m_colours;
         VertexBuffer* m_colourVbo;
-        VertexArray* m_vao;
-
 };
 
 
