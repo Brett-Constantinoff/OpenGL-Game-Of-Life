@@ -7,7 +7,7 @@
 #include <limits>
 
 #define CUBE_INDEX_COUNT 36
-#define MAX_CUBES 10000
+#define MAX_CUBES 20000
 
 class Cube : public RenderObject{
     public:
@@ -20,11 +20,21 @@ class Cube : public RenderObject{
 
         glm::mat4* getTransforms();
         glm::vec3* getColours();
+        glm::vec3* getPositions();
+        glm::vec3* getStandarColour();
+        glm::vec3* getSelectionColour();
+        uint32_t* getRenderAmount();
+
+        void addInstance(glm::vec3 position);
     
     private:
-        glm::mat4* m_transforms;
-        glm::vec3* m_colours;
+        std::vector<glm::mat4> m_transforms;
+        std::vector<glm::vec3> m_positions;
+        std::vector<glm::vec3> m_colours;
         VertexBuffer* m_colourVbo;
+        uint32_t m_renderAmount = 0;
+        glm::vec3 m_standardColour = {0.06f, 0.32f, 0.73f};
+        glm::vec3 m_selectionColour = {1.0f, 0.32f, 0.73f};
 };
 
 

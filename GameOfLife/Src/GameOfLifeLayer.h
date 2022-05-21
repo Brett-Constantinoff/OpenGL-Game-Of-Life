@@ -15,6 +15,8 @@
 #include <iostream>
 #include <sstream>
 
+#define CLICK_SPEED 0.25f
+
 class GameOfLifeLayer : public Layer{
     public:
         GameOfLifeLayer();
@@ -46,6 +48,7 @@ class GameOfLifeLayer : public Layer{
         uint32_t m_previousIntersection = 0;
         uint32_t m_currentIntersection = 0;
 
+        float m_lastClick = 0.0f;
         
 };  
 

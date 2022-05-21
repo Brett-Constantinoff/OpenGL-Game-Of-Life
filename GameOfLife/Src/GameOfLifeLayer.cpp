@@ -50,9 +50,9 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win){
 	glm::vec3 rayDir;
 	glm::vec3 rayOrigin;
 	getMouseRay(win, m_projection, m_view, rayDir, rayOrigin);
-	
+
 	bool intersect = false;
-	for(uint32_t i = 0; i < MAX_CUBES; i++)
+	for(uint32_t i = 0; i < *m_cube->getRenderAmount(); i++)
 	{
 		if(rayIntersect(rayDir, rayOrigin, m_cube->getTransforms()[i], *m_cube->getMin(), *m_cube->getMax()))
 		{
@@ -60,19 +60,27 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win){
 			m_previousIntersection = m_currentIntersection;
 			m_currentIntersection = i;
 
-			m_cube->getColours()[m_previousIntersection] = {0.06f, 0.32f, 0.73f};
-			m_cube->getColours()[m_currentIntersection] = {1.0f, 0.32f, 0.73f};
+			m_cube->getColours()[m_previousIntersection] = *m_cube->getStandarColour();
+			m_cube->getColours()[m_currentIntersection] = *m_cube->getSelectionColour();
 
 			if(glfwGetMouseButton(*win->getContext(), GLFW_MOUSE_BUTTON_LEFT))
 			{
-				m_cube->getColours()[m_currentIntersection] = {1.0f, 0.7f, 0.3f};
+				float currentClick = glfwGetTime();
+				float dt = currentClick - m_lastClick;
+				m_lastClick = currentClick;
+				
+				if(dt >= CLICK_SPEED)
+				{
+					std::cout << dt << std::endl;
+				}
+				
 			}
 			break;
 		}
 	}
 	if(!intersect)
 	{
-		m_cube->getColours()[m_previousIntersection] = {0.06f, 0.32f, 0.73f};
+		m_cube->getColours()[m_previousIntersection] = *m_cube->getStandarColour();
 	}
 	
 

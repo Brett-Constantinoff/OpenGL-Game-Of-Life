@@ -7,8 +7,6 @@ Cube::Cube()
 
 Cube::~Cube()
 {
-    delete[] m_transforms;
-    delete[] m_colours;
     delete m_vao;
     delete m_colourVbo;
 }
@@ -72,18 +70,18 @@ void Cube::init()
 	ibo.bind();
 	ibo.setData(indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
 
-	m_transforms = new glm::mat4[MAX_CUBES];
-	m_colours = new glm::vec3[MAX_CUBES];
 	uint32_t width = 100;
 	uint32_t height = 100;
 	glm::vec3 transform{0.0f, 0.0f, 0.0f};
 	for(uint32_t i = 0; i < width; i++){
 		for(uint32_t j = 0; j < height; j++){
+            m_positions.push_back(transform);
 			uint32_t index = (i * width) + j;
 			glm::mat4 transformMat = glm::translate(glm::mat4(1.0f), transform);
-			m_transforms[index] = transformMat;
-			m_colours[index] = {0.06f, 0.32f, 0.73f};
+			m_transforms.push_back(transformMat);
+			m_colours.push_back(glm::vec3{0.06f, 0.32f, 0.73f});
 			transform.x += 1.0f;
+            m_renderAmount++;
 		}
 		transform.x = 0.0f;
 		transform.z += 1.0f;
@@ -91,12 +89,12 @@ void Cube::init()
 
     m_colourVbo = new VertexBuffer(GL_ARRAY_BUFFER);
 	m_colourVbo->bind();
-	m_colourVbo->setData(sizeof(glm::vec3) * MAX_CUBES, m_colours, GL_DYNAMIC_DRAW);
+	m_colourVbo->setData(sizeof(glm::vec3) * m_renderAmount, &m_colours[0], GL_DYNAMIC_DRAW);
 	m_vao->setAttribPointer(1, 3 , GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0, true);
 
     VertexBuffer transformVbo(GL_ARRAY_BUFFER);
 	transformVbo.bind();
-	transformVbo.setData(sizeof(glm::mat4) * MAX_CUBES, m_transforms, GL_STATIC_DRAW);
+	transformVbo.setData(sizeof(glm::mat4) * m_renderAmount, &m_transforms[0], GL_STATIC_DRAW);
 
 	m_vao->setAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0, true);
 	m_vao->setAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)sizeof(glm::vec4), true);
@@ -116,8 +114,8 @@ void Cube::render()
 {
     m_vao->bind();
     m_colourVbo->bind();
-    m_colourVbo->setData(sizeof(glm::vec3) * MAX_CUBES, m_colours, GL_DYNAMIC_DRAW);
-	glDrawElementsInstanced(GL_TRIANGLES, CUBE_INDEX_COUNT, GL_UNSIGNED_INT, 0, MAX_CUBES);
+    m_colourVbo->setData(sizeof(glm::vec3) * m_renderAmount, &m_colours[0], GL_DYNAMIC_DRAW);
+	glDrawElementsInstanced(GL_TRIANGLES, CUBE_INDEX_COUNT, GL_UNSIGNED_INT, 0, m_renderAmount);
 	m_vao->unBind();
 }
 
@@ -129,4 +127,24 @@ glm::mat4* Cube::getTransforms()
 glm::vec3* Cube::getColours()
 {
     return &m_colours[0];
+}
+
+glm::vec3* Cube::getPositions()
+{
+    return &m_positions[0];
+}
+
+glm::vec3* Cube::getStandarColour()
+{
+    return &m_standardColour;
+}
+
+glm::vec3* Cube::getSelectionColour()
+{
+    return &m_selectionColour;
+}
+
+uint32_t* Cube::getRenderAmount()
+{
+    return &m_renderAmount;
 }
