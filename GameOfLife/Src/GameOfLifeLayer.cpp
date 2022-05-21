@@ -71,7 +71,15 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win){
 				
 				if(dt >= CLICK_SPEED)
 				{
-					std::cout << dt << std::endl;
+					glm::vec3 position{ m_cube->getPositions()[i].x, m_cube->getPositions()[i].y + 1.0f, m_cube->getPositions()[i].z};
+					if(!m_cube->cubeExists(position))
+					{
+						m_cube->addInstance(position);
+					}
+					else
+					{
+						m_cube->removeInstance(position);
+					}
 				}
 				
 			}

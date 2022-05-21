@@ -9,6 +9,7 @@ Cube::~Cube()
 {
     delete m_vao;
     delete m_colourVbo;
+    delete m_transformBuffer;
 }
 
 void Cube::init()
@@ -92,9 +93,9 @@ void Cube::init()
 	m_colourVbo->setData(sizeof(glm::vec3) * m_renderAmount, &m_colours[0], GL_DYNAMIC_DRAW);
 	m_vao->setAttribPointer(1, 3 , GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0, true);
 
-    VertexBuffer transformVbo(GL_ARRAY_BUFFER);
-	transformVbo.bind();
-	transformVbo.setData(sizeof(glm::mat4) * m_renderAmount, &m_transforms[0], GL_STATIC_DRAW);
+    m_transformBuffer = new VertexBuffer(GL_ARRAY_BUFFER);
+	m_transformBuffer->bind();
+	m_transformBuffer->setData(sizeof(glm::mat4) * m_renderAmount, &m_transforms[0], GL_DYNAMIC_DRAW);
 
 	m_vao->setAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0, true);
 	m_vao->setAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)sizeof(glm::vec4), true);
@@ -115,6 +116,10 @@ void Cube::render()
     m_vao->bind();
     m_colourVbo->bind();
     m_colourVbo->setData(sizeof(glm::vec3) * m_renderAmount, &m_colours[0], GL_DYNAMIC_DRAW);
+
+    m_transformBuffer->bind();
+	m_transformBuffer->setData(sizeof(glm::mat4) * m_renderAmount, &m_transforms[0], GL_DYNAMIC_DRAW);
+
 	glDrawElementsInstanced(GL_TRIANGLES, CUBE_INDEX_COUNT, GL_UNSIGNED_INT, 0, m_renderAmount);
 	m_vao->unBind();
 }
@@ -134,12 +139,12 @@ glm::vec3* Cube::getPositions()
     return &m_positions[0];
 }
 
-glm::vec3* Cube::getStandarColour()
+const glm::vec3* Cube::getStandarColour()
 {
     return &m_standardColour;
 }
 
-glm::vec3* Cube::getSelectionColour()
+const glm::vec3* Cube::getSelectionColour()
 {
     return &m_selectionColour;
 }
@@ -148,3 +153,30 @@ uint32_t* Cube::getRenderAmount()
 {
     return &m_renderAmount;
 }
+
+void Cube::addInstance(glm::vec3 position)
+{
+    m_positions.push_back(position);
+    m_transforms.push_back(glm::translate(glm::mat4(1.0f), position));
+    m_colours.push_back(m_gameOfLifeColour);
+    m_renderAmount++;
+}
+
+void Cube::removeInstance(glm::vec3 position)
+{
+    auto iterator = std::find(m_positions.begin(), m_positions.end(), position);
+    uint32_t index = iterator - m_positions.begin();
+    m_positions.erase(m_positions.begin() + index);
+    m_transforms.erase(m_transforms.begin() + index);
+    m_colours.erase(m_colours.begin() + index);
+    m_renderAmount--;
+}
+
+bool Cube::cubeExists(glm::vec3 position)
+{
+    return std::find(m_positions.begin(), m_positions.end(), position) != m_positions.end();
+}
+
+
+
+

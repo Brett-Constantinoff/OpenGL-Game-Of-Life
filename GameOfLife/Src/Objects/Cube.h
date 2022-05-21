@@ -21,20 +21,24 @@ class Cube : public RenderObject{
         glm::mat4* getTransforms();
         glm::vec3* getColours();
         glm::vec3* getPositions();
-        glm::vec3* getStandarColour();
-        glm::vec3* getSelectionColour();
+        const glm::vec3* getStandarColour();
+        const glm::vec3* getSelectionColour();
         uint32_t* getRenderAmount();
 
         void addInstance(glm::vec3 position);
+        void removeInstance(glm::vec3 position);
+        bool cubeExists(glm::vec3 position);
     
     private:
         std::vector<glm::mat4> m_transforms;
         std::vector<glm::vec3> m_positions;
         std::vector<glm::vec3> m_colours;
         VertexBuffer* m_colourVbo;
+        VertexBuffer* m_transformBuffer;
         uint32_t m_renderAmount = 0;
-        glm::vec3 m_standardColour = {0.06f, 0.32f, 0.73f};
-        glm::vec3 m_selectionColour = {1.0f, 0.32f, 0.73f};
+        const glm::vec3 m_standardColour = {0.06f, 0.32f, 0.73f};
+        const glm::vec3 m_selectionColour = {1.0f, 0.32f, 0.73f};
+        const glm::vec3 m_gameOfLifeColour = {1.0f, 1.0f, 0.0f};
 };
 
 
