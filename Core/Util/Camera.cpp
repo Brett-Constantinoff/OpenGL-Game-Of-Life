@@ -11,6 +11,15 @@ void Camera::move(GLFWwindow **win, float dt){
     m_front.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
     m_front = glm::normalize(m_front);
 
+    if(m_pitch > 89.0f)
+    {
+        m_pitch = 89.0f;
+    }
+    if(m_pitch < -89.0f)
+    {
+        m_pitch = -89.0f;
+    }
+
     const float cameraSpeed = m_speed * dt;
 
     if (glfwGetKey(*win, GLFW_KEY_W) == GLFW_PRESS)
