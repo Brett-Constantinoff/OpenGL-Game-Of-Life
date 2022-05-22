@@ -17,47 +17,68 @@ void Cube::init()
     m_vao = new VertexArray();
     m_vao->bind();
 
+
     std::vector<float> vertexData = {
-       //positions         
-       0.0f, 0.0f, 0.0f,   
-       1.0f, 0.0f, 0.0f,   
-       1.0f, 1.0f, 0.0f,   
-       0.0f, 1.0f, 0.0f,   
+        //positions                 //normals
+        //front face
+        1.0f, 1.0f, 1.0f,           0.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 1.0f,           0.0f, 0.0f, 1.0f, 
+        0.0f, 0.0f, 1.0f,           0.0f, 0.0f, 1.0f, 
+        0.0f, 0.0f, 1.0f,           0.0f, 0.0f, 1.0f, 
+        1.0f, 0.0f, 1.0f,           0.0f, 0.0f, 1.0f, 
+        1.0f, 1.0f, 1.0f,           0.0f, 0.0f, 1.0f,
+        //right face
+        1.0f, 1.0f, 0.0f,           1.0f, 0.0f, 0.0f, 
+        1.0f, 1.0f, 1.0f,           1.0f, 0.0f, 0.0f, 
+        1.0f, 0.0f, 1.0f,           1.0f, 0.0f, 0.0f, 
+        1.0f, 0.0f, 1.0f,           1.0f, 0.0f, 0.0f, 
+        1.0f, 0.0f, 0.0f,           1.0f, 0.0f, 0.0f, 
+        1.0f, 1.0f, 0.0f,           1.0f, 0.0f, 0.0f, 
+        //left face
+        0.0f, 1.0f, 1.0f,           -1.0f, 0.0f, 0.0f, 
+        0.0f, 0.0f, 0.0f,           -1.0f, 0.0f, 0.0f, 
+        0.0f, 0.0f, 1.0f,           -1.0f, 0.0f, 0.0f, 
+        0.0f, 1.0f, 1.0f,           -1.0f, 0.0f, 0.0f, 
+        0.0f, 1.0f, 0.0f,           -1.0f, 0.0f, 0.0f, 
+        0.0f, 0.0f, 0.0f,           -1.0f, 0.0f, 0.0f, 
+        //back face
+        1.0f, 0.0f, 0.0f,            0.0f, 0.0f, -1.0f,  
+        0.0f, 0.0f, 0.0f,            0.0f, 0.0f, -1.0f, 
+        0.0f, 1.0f, 0.0f,            0.0f, 0.0f, -1.0f,  
+        0.0f, 1.0f, 0.0f,            0.0f, 0.0f, -1.0f,  
+        1.0f, 1.0f, 0.0f,            0.0f, 0.0f, -1.0f,  
+        1.0f, 0.0f, 0.0f,            0.0f, 0.0f, -1.0f,  
+        //top face
+        1.0f, 1.0f, 1.0f,            0.0f, 1.0f, 0.0f, 
+        1.0f, 1.0f, 0.0f,            0.0f, 1.0f, 0.0f, 
+        0.0f, 1.0f, 0.0f,            0.0f, 1.0f, 0.0f, 
+        0.0f, 1.0f, 0.0f,            0.0f, 1.0f, 0.0f, 
+        0.0f, 1.0f, 1.0f,            0.0f, 1.0f, 0.0f, 
+        1.0f, 1.0f, 1.0f,            0.0f, 1.0f, 0.0f, 
+        //bottom face
+        0.0f, 0.0f, 1.0f,            0.0f, -1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,            0.0f, -1.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,            0.0f, -1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f,            0.0f, -1.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,            0.0f, -1.0f, 0.0f,
+        1.0f, 0.0f, 1.0f,            0.0f, -1.0f, 0.0f,
+    
+    };  
+   
 
-       1.0f, 0.0f, 0.0f,    
-       1.0f, 0.0f, 1.0f,   
-       1.0f, 1.0f, 1.0f,   
-       1.0f, 1.0f, 0.0f,   
+    calculateMinMax(vertexData, m_min, m_max, 6);
 
-       0.0f, 0.0f, 1.0f,   
-       0.0f, 1.0f, 1.0f,   
-       1.0f, 1.0f, 1.0f,   
-       1.0f, 0.0f, 1.0f,   
+    VertexBuffer positionVbo(GL_ARRAY_BUFFER);
+    positionVbo.bind();
+	positionVbo.setData(vertexData.size() * sizeof(float), &vertexData[0], GL_STATIC_DRAW);
+    m_vao->setAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)0);
 
-       0.0f, 0.0f, 0.0f,   
-       0.0f, 1.0f, 0.0f,   
-       0.0f, 1.0f, 1.0f,   
-       0.0f, 0.0f, 1.0f,   
+    VertexBuffer normalVbo(GL_ARRAY_BUFFER);
+    normalVbo.bind();
+    normalVbo.setData(vertexData.size() * sizeof(float), &vertexData[0], GL_STATIC_DRAW);
+    m_vao->setAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float) * 3));
 
-       0.0f, 1.0f, 0.0f,   
-       1.0f, 1.0f, 0.0f,    
-       0.0f, 1.0f, 1.0f,    
-       1.0f, 1.0f, 1.0f,   
-
-       0.0f, 0.0f, 1.0f,    
-       0.0f, 1.0f, 1.0f,    
-       1.0f, 1.0f, 1.0f,    
-       1.0f, 0.0f, 1.0f,    
-    };
-
-
-    calculateMinMax(vertexData, m_min, m_max);
-
-    VertexBuffer vbo(GL_ARRAY_BUFFER);
-    vbo.bind();
-	vbo.setData(vertexData.size() * sizeof(float), &vertexData[0], GL_STATIC_DRAW);
-    m_vao->setAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
-
+    /*
     std::vector<uint32_t> indices = {
         0,  1,  2,      0,  2,  3,
         4,  5,  6,      4,  6,  7,   
@@ -70,7 +91,8 @@ void Cube::init()
     VertexBuffer ibo(GL_ELEMENT_ARRAY_BUFFER);
 	ibo.bind();
 	ibo.setData(indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
-
+    */
+    
 	uint32_t width = 100;
 	uint32_t height = 100;
 	glm::vec3 transform{0.0f, 0.0f, 0.0f};
@@ -91,16 +113,16 @@ void Cube::init()
     m_colourVbo = new VertexBuffer(GL_ARRAY_BUFFER);
 	m_colourVbo->bind();
 	m_colourVbo->setData(sizeof(glm::vec3) * m_renderAmount, &m_colours[0], GL_DYNAMIC_DRAW);
-	m_vao->setAttribPointer(1, 3 , GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0, true);
+	m_vao->setAttribPointer(2, 3 , GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0, true);
 
     m_transformBuffer = new VertexBuffer(GL_ARRAY_BUFFER);
 	m_transformBuffer->bind();
 	m_transformBuffer->setData(sizeof(glm::mat4) * m_renderAmount, &m_transforms[0], GL_DYNAMIC_DRAW);
 
-	m_vao->setAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0, true);
-	m_vao->setAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)sizeof(glm::vec4), true);
-	m_vao->setAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)), true);
-	m_vao->setAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)), true);
+	m_vao->setAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0, true);
+	m_vao->setAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)sizeof(glm::vec4), true);
+	m_vao->setAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)), true);
+	m_vao->setAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)), true);
 
 	m_vao->unBind();
 
@@ -120,7 +142,7 @@ void Cube::render()
     m_transformBuffer->bind();
 	m_transformBuffer->setData(sizeof(glm::mat4) * m_renderAmount, &m_transforms[0], GL_DYNAMIC_DRAW);
 
-	glDrawElementsInstanced(GL_TRIANGLES, CUBE_INDEX_COUNT, GL_UNSIGNED_INT, 0, m_renderAmount);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, CUBE_VERTEX_COUNT, m_renderAmount);
 	m_vao->unBind();
 }
 
@@ -149,6 +171,11 @@ const glm::vec3* Cube::getSelectionColour()
     return &m_selectionColour;
 }
 
+const glm::vec3* Cube::getGameOfLifeColour()
+{
+    return &m_gameOfLifeColour;
+}
+
 uint32_t* Cube::getRenderAmount()
 {
     return &m_renderAmount;
@@ -162,20 +189,37 @@ void Cube::addInstance(glm::vec3 position)
     m_renderAmount++;
 }
 
-void Cube::removeInstance(glm::vec3 position)
+void Cube::removeInstance(uint32_t index)
 {
-    auto iterator = std::find(m_positions.begin(), m_positions.end(), position);
-    uint32_t index = iterator - m_positions.begin();
     m_positions.erase(m_positions.begin() + index);
     m_transforms.erase(m_transforms.begin() + index);
     m_colours.erase(m_colours.begin() + index);
     m_renderAmount--;
 }
 
-bool Cube::cubeExists(glm::vec3 position)
+bool Cube::cubePositionExists(glm::vec3 position)
 {
     return std::find(m_positions.begin(), m_positions.end(), position) != m_positions.end();
 }
+
+bool Cube::cubeColourExists(glm::vec3 colour)
+{
+    return std::find(m_colours.begin(), m_colours.end(), colour) != m_colours.end();
+}
+
+
+uint32_t Cube::indexOfPosition(glm::vec3 position, uint32_t start, uint32_t end)
+{
+    return std::find(m_positions.begin() + start, m_positions.end() - end, position) - m_positions.begin();
+}
+
+uint32_t Cube::indexOfColour(glm::vec3 colour, uint32_t start, uint32_t end)
+{
+    return std::find(m_colours.begin() + start, m_colours.end() - end, colour) - m_colours.begin();
+}
+
+
+
 
 
 

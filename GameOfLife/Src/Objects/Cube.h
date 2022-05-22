@@ -6,8 +6,10 @@
 #include <iostream>
 #include <limits>
 
-#define CUBE_INDEX_COUNT 36
+#define CUBE_INDEX_COUNT 24
+#define CUBE_VERTEX_COUNT 36
 #define MAX_CUBES 20000
+#define PLATFORM_CUBES 10000
 
 class Cube : public RenderObject{
     public:
@@ -23,11 +25,15 @@ class Cube : public RenderObject{
         glm::vec3* getPositions();
         const glm::vec3* getStandarColour();
         const glm::vec3* getSelectionColour();
+        const glm::vec3* getGameOfLifeColour();
         uint32_t* getRenderAmount();
 
         void addInstance(glm::vec3 position);
-        void removeInstance(glm::vec3 position);
-        bool cubeExists(glm::vec3 position);
+        void removeInstance(uint32_t index);
+        bool cubePositionExists(glm::vec3 position);
+        bool cubeColourExists(glm::vec3 colour);
+        uint32_t indexOfPosition(glm::vec3 position, uint32_t start, uint32_t end);
+        uint32_t indexOfColour(glm::vec3 colour, uint32_t start, uint32_t end);
     
     private:
         std::vector<glm::mat4> m_transforms;

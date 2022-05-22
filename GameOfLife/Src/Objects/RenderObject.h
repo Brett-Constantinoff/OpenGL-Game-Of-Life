@@ -23,7 +23,7 @@ class RenderObject{
         glm::vec3* getMax();
 
     protected:
-        void calculateMinMax(std::vector<float> vertexPositions, glm::vec3& min, glm::vec3& max);
+        void calculateMinMax(std::vector<float> vertexPositions, glm::vec3& min, glm::vec3& max, uint32_t offset);
     
     protected:
         VertexArray* m_vao;

@@ -15,9 +15,17 @@
 #include <iostream>
 #include <sstream>
 
-#define CLICK_SPEED 0.25f
+#define CLICK_SPEED 0.15f
 
-class GameOfLifeLayer : public Layer{
+enum class State
+{
+    DEFAULT = 0,
+    RUNNING = 1,
+    RESET = 2,
+};
+
+class GameOfLifeLayer : public Layer
+{
     public:
         GameOfLifeLayer();
         virtual ~GameOfLifeLayer();
@@ -49,7 +57,8 @@ class GameOfLifeLayer : public Layer{
         uint32_t m_currentIntersection = 0;
 
         float m_lastClick = 0.0f;
-        
+
+        State m_state;
 };  
 
 #endif

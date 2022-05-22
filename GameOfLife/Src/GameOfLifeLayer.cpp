@@ -1,18 +1,20 @@
 #include "GameOfLifeLayer.h"
 
-GameOfLifeLayer::GameOfLifeLayer(){
+GameOfLifeLayer::GameOfLifeLayer()
+{
 }
 
-GameOfLifeLayer::~GameOfLifeLayer(){
+GameOfLifeLayer::~GameOfLifeLayer()
+{
     delete m_shader;
 	delete m_textShader;
 	delete m_camera;
 	delete m_textRenderer;
 	delete m_cube;
-
 }
 
-void GameOfLifeLayer::onAttach(){
+void GameOfLifeLayer::onAttach()
+{
     glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -26,12 +28,17 @@ void GameOfLifeLayer::onAttach(){
 	m_camera = new Camera({50.0f, 53.0f, 165.2f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, 10.0f);
 
 	m_cube = new Cube();
+
+	m_state = State::DEFAULT;
+
 }
 
-void GameOfLifeLayer::onDetach(){
+void GameOfLifeLayer::onDetach()
+{
 }
 
-void GameOfLifeLayer::onUpdate(float dt, Window* win){
+void GameOfLifeLayer::onUpdate(float dt, Window* win)
+{
 	m_camera->move(win->getContext(), dt);
 
 	m_projection = glm::perspective(glm::radians(45.0f), static_cast<float>(win->getWidth()) / static_cast<float>(win->getHeight()), 0.1f, 500.0f);
@@ -51,8 +58,10 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win){
 	glm::vec3 rayOrigin;
 	getMouseRay(win, m_projection, m_view, rayDir, rayOrigin);
 
+	
 	bool intersect = false;
 	for(uint32_t i = 0; i < *m_cube->getRenderAmount(); i++)
+	
 	{
 		if(rayIntersect(rayDir, rayOrigin, m_cube->getTransforms()[i], *m_cube->getMin(), *m_cube->getMax()))
 		{
@@ -60,8 +69,11 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win){
 			m_previousIntersection = m_currentIntersection;
 			m_currentIntersection = i;
 
+			//change previous intersection so cubes arent being continuously coloured
 			m_cube->getColours()[m_previousIntersection] = *m_cube->getStandarColour();
+
 			m_cube->getColours()[m_currentIntersection] = *m_cube->getSelectionColour();
+			
 
 			if(glfwGetMouseButton(*win->getContext(), GLFW_MOUSE_BUTTON_LEFT))
 			{
@@ -71,19 +83,21 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win){
 				
 				if(dt >= CLICK_SPEED)
 				{
-					glm::vec3 position{ m_cube->getPositions()[i].x, m_cube->getPositions()[i].y + 1.0f, m_cube->getPositions()[i].z};
-					if(!m_cube->cubeExists(position))
+					glm::vec3 position{m_cube->getPositions()[i].x, m_cube->getPositions()[i].y + 1.0f, m_cube->getPositions()[i].z};
+					if(!m_cube->cubePositionExists(position))
 					{
 						m_cube->addInstance(position);
 					}
 					else
 					{
-						m_cube->removeInstance(position);
+						uint32_t index = m_cube->indexOfPosition(position, PLATFORM_CUBES - 1, 0);
+						m_cube->removeInstance(index);
 					}
 				}
 				
 			}
 			break;
+			
 		}
 	}
 	if(!intersect)
@@ -91,29 +105,50 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win){
 		m_cube->getColours()[m_previousIntersection] = *m_cube->getStandarColour();
 	}
 	
-
+	if(m_state == State::RESET)
+	{
+		if(m_cube->cubeColourExists(*m_cube->getGameOfLifeColour()))
+		{
+			uint32_t index = m_cube->indexOfColour(*m_cube->getGameOfLifeColour(), PLATFORM_CUBES - 1, 0);
+			m_cube->removeInstance(index);
+		}
+		else
+		{
+			m_state = State::DEFAULT;
+		}
+	}
+	
     glClearColor(0.25f, 0.25f, 0.25f, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 };
 
-void GameOfLifeLayer::onRender(){
-
+void GameOfLifeLayer::onRender()
+{
 	m_cube->render();
 
 	m_textRenderer->render(m_frameRate.str(), {0.0f, 25.0f}, 0.5f, {0.0f, 1.0f, 0.0f}, false);
 	m_textRenderer->render(m_camPosition.str(), {0.0f, 45.0f}, 0.5f, {0.0f, 1.0f, 0.0f}, false);
 }
 
-void GameOfLifeLayer::onRenderImgui(){
+void GameOfLifeLayer::onRenderImgui()
+{
 
-	if (ImGui::BeginMainMenuBar()){
-		if (ImGui::BeginMenu("Game Of Life Menu")){
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Game Of Life Menu"))
+		{
+			if(ImGui::MenuItem("Begin Game of Life"))
+			{
+				m_state = State::RUNNING;
+			}
+			if(ImGui::MenuItem("Reset Game of Life"))
+			{
+				m_state = State::RESET;
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
-
 }
 
 void GameOfLifeLayer::getMouseRay(Window* win, glm::mat4 projection, glm::mat4 view, glm::vec3& rayDir, glm::vec3& rayOrig)

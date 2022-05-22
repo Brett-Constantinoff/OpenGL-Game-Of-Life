@@ -5,7 +5,7 @@ RenderObject::RenderObject()
     
 }
 
-void RenderObject::calculateMinMax(std::vector<float> vertexPositions, glm::vec3& min, glm::vec3& max)
+void RenderObject::calculateMinMax(std::vector<float> vertexPositions, glm::vec3& min, glm::vec3& max, uint32_t offset)
 {
     float maxNum = -std::numeric_limits<float>::infinity();
     float minNum = std::numeric_limits<float>::infinity();
@@ -13,7 +13,7 @@ void RenderObject::calculateMinMax(std::vector<float> vertexPositions, glm::vec3
     glm::vec3 maxVertexPos{maxNum, maxNum, maxNum};
     glm::vec3 minVertexPos{minNum, minNum, minNum};
 
-    for(uint32_t i = 0; i < vertexPositions.size() - 3; i += 3)
+    for(uint32_t i = 0; i < vertexPositions.size() - offset - 1; i += offset - 1)
     {
         glm::vec3 currVertexPos{vertexPositions[i], vertexPositions[i + 1], vertexPositions[i + 2]};
         if(currVertexPos.x >= maxVertexPos.x && 
