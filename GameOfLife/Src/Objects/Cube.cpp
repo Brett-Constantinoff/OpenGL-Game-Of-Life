@@ -14,9 +14,13 @@ Cube::~Cube()
 
 void Cube::init()
 {
+    //reserve initial capacity for all vectors
+    m_transforms.reserve(MAX_CUBES);
+    m_positions.reserve(MAX_CUBES);
+    m_colours.reserve(MAX_CUBES);
+
     m_vao = new VertexArray();
     m_vao->bind();
-
 
     std::vector<float> vertexData = {
         //positions                 //normals
@@ -78,28 +82,12 @@ void Cube::init()
     normalVbo.setData(vertexData.size() * sizeof(float), &vertexData[0], GL_STATIC_DRAW);
     m_vao->setAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float) * 3));
 
-    /*
-    std::vector<uint32_t> indices = {
-        0,  1,  2,      0,  2,  3,
-        4,  5,  6,      4,  6,  7,   
-        8,  9,  10,     8,  10, 11,  
-        12, 13, 14,     12, 14, 15, 
-        16, 17, 18,     17, 18, 19,  
-        20, 21, 22,     21, 22, 23
-    };
-
-    VertexBuffer ibo(GL_ELEMENT_ARRAY_BUFFER);
-	ibo.bind();
-	ibo.setData(indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
-    */
-    
-	uint32_t width = 100;
-	uint32_t height = 100;
+	int width = 100;
+	int height = 100;
 	glm::vec3 transform{0.0f, 0.0f, 0.0f};
-	for(uint32_t i = 0; i < width; i++){
-		for(uint32_t j = 0; j < height; j++){
+	for(int i = 0; i < width; i++){
+		for(int j = 0; j < height; j++){
             m_positions.push_back(transform);
-			uint32_t index = (i * width) + j;
 			glm::mat4 transformMat = glm::translate(glm::mat4(1.0f), transform);
 			m_transforms.push_back(transformMat);
 			m_colours.push_back(glm::vec3{0.06f, 0.32f, 0.73f});
@@ -176,48 +164,54 @@ const glm::vec3* Cube::getGameOfLifeColour()
     return &m_gameOfLifeColour;
 }
 
-uint32_t* Cube::getRenderAmount()
+int* Cube::getRenderAmount()
 {
     return &m_renderAmount;
 }
 
 void Cube::addInstance(glm::vec3 position)
 {
-    m_positions.push_back(position);
-    m_transforms.push_back(glm::translate(glm::mat4(1.0f), position));
-    m_colours.push_back(m_gameOfLifeColour);
-    m_renderAmount++;
+    if(m_renderAmount < MAX_CUBES)
+    {
+        m_positions.push_back(position);
+        m_colours.push_back(m_gameOfLifeColour);
+        m_transforms.push_back(glm::translate(glm::mat4(1.0f), position));
+        m_renderAmount++;
+    }
 }
 
-void Cube::removeInstance(uint32_t index)
+void Cube::removeInstance(int index)
 {
     m_positions.erase(m_positions.begin() + index);
-    m_transforms.erase(m_transforms.begin() + index);
     m_colours.erase(m_colours.begin() + index);
+    m_transforms.erase(m_transforms.begin() + index);
     m_renderAmount--;
 }
 
-bool Cube::cubePositionExists(glm::vec3 position)
+void Cube::removeCells()
 {
-    return std::find(m_positions.begin(), m_positions.end(), position) != m_positions.end();
+    for(int i = m_renderAmount; i > PLATFORM_CUBES; i--)
+    {
+        m_positions.erase(m_positions.begin() + i - 1);
+        m_colours.erase(m_colours.begin() + i - 1);
+        m_transforms.erase(m_transforms.begin() + i - 1);
+        m_renderAmount--;
+    }
 }
 
-bool Cube::cubeColourExists(glm::vec3 colour)
+int Cube::getIndex(glm::vec3 position)
 {
-    return std::find(m_colours.begin(), m_colours.end(), colour) != m_colours.end();
+    for(int i = 0; i < m_renderAmount; i++)
+    {
+        if( m_positions[i].x == position.x && 
+            m_positions[i].y == position.y &&
+            m_positions[i].z == position.z )
+            {
+                return i;
+            }
+    }
+    return -1;
 }
-
-
-uint32_t Cube::indexOfPosition(glm::vec3 position, uint32_t start, uint32_t end)
-{
-    return std::find(m_positions.begin() + start, m_positions.end() - end, position) - m_positions.begin();
-}
-
-uint32_t Cube::indexOfColour(glm::vec3 colour, uint32_t start, uint32_t end)
-{
-    return std::find(m_colours.begin() + start, m_colours.end() - end, colour) - m_colours.begin();
-}
-
 
 
 
