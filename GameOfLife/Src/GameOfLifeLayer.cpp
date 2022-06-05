@@ -2,6 +2,7 @@
 
 GameOfLifeLayer::GameOfLifeLayer()
 {
+
 }
 
 GameOfLifeLayer::~GameOfLifeLayer()
@@ -15,16 +16,18 @@ GameOfLifeLayer::~GameOfLifeLayer()
 	delete m_board;
 }
 
-void GameOfLifeLayer::onAttach()
+void GameOfLifeLayer::onAttach(Window* win)
 {
     glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	m_window = win;
+
 	m_shader = new Shader("GameOfLife/Assets/glsl/mainShader.glsl");
 	m_textShader = new Shader("GameOfLife/Assets/glsl/textShader.glsl");
 
-	m_textRenderer = new TextRenderer(m_textShader, 1080, 720);
+	m_textRenderer = new TextRenderer(m_textShader, m_window->getWidth() , m_window->getHeight());
 	m_textRenderer->loadFont("GameOfLife/Assets/fonts/OpenSans-Regular.TTF", 24);
 
 	m_camera = new Camera({49.86f, 108.20f, -6.55f}, {0.0f, -0.91f, 0.41f}, {0.0f, 1.0f, 0.0f}, 10.0f);
@@ -43,9 +46,9 @@ void GameOfLifeLayer::onDetach()
 {
 }
 
-void GameOfLifeLayer::onUpdate(float dt, Window* win)
+void GameOfLifeLayer::onUpdate(float dt)
 {
-	m_projection = glm::perspective(glm::radians(45.0f), static_cast<float>(win->getWidth()) / static_cast<float>(win->getHeight()), 0.1f, 500.0f);
+	m_projection = glm::perspective(glm::radians(45.0f), static_cast<float>(m_window->getWidth()) / static_cast<float>(m_window->getHeight()), 0.1f, 500.0f);
 	m_view = *m_camera->getView();
 
 	m_frameRate.str("");
@@ -61,11 +64,10 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win)
 	m_shader->setMat4("uProjection", m_projection);
 	m_shader->setMat4("uView", m_view);
 
-	m_mousePicker->getMouseRay(win, m_projection, m_view);
+	m_mousePicker->getMouseRay(m_window, m_projection, m_view);
 
 	m_solveTime += dt;
 
-	
 	bool intersect = false;
 	for(int i = 0; i < *m_cube->getRenderAmount(); i++)
 	{
@@ -79,7 +81,7 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win)
 			m_cube->getColours()[m_previousIntersection] = *m_cube->getStandarColour();
 			m_cube->getColours()[m_currentIntersection] = *m_cube->getSelectionColour();
 
-			if(glfwGetMouseButton(*win->getContext(), GLFW_MOUSE_BUTTON_LEFT))
+			if(glfwGetMouseButton(*m_window->getContext(), GLFW_MOUSE_BUTTON_LEFT))
 			{
 				float currentClick = glfwGetTime();
 				float dt = currentClick - m_lastClick;
@@ -100,8 +102,7 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win)
 					m_board->update(cellPosition);
 				}
 			}
-			break;
-			
+			break;	
 		}
 	}
 	if(!intersect)
@@ -127,7 +128,6 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win)
 			m_solveTime = 0.0f; 
 		}
 	}
-	
     glClearColor(0.25f, 0.25f, 0.25f, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 };

@@ -5,7 +5,8 @@
 #include <string>
 #include <sstream>
 
-Shader::Shader(const std::string &filepath){
+Shader::Shader(const std::string &filepath)
+{
     m_ID = glCreateProgram(); //creates current shader program
 
     shaderSource source = Shader::parseShader(filepath);
@@ -24,15 +25,18 @@ Shader::Shader(const std::string &filepath){
     glDeleteShader(fShader);
 }
 
-void Shader::use( void ){
+void Shader::use( void )
+{
     glUseProgram(m_ID);
 }
 
-unsigned int Shader::getId( void ){
+unsigned int Shader::getId( void )
+{
     return m_ID;
 }
 
-unsigned int Shader::compileShader(const std::string &source, unsigned int type){
+unsigned int Shader::compileShader(const std::string &source, unsigned int type)
+{
     
     const char* src = source.c_str(); //returns a pointer to source
 
@@ -44,7 +48,8 @@ unsigned int Shader::compileShader(const std::string &source, unsigned int type)
     int success;
     char infoLog[512];
     glGetShaderiv(shadermID, GL_COMPILE_STATUS, &success);
-    if(!success){
+    if(!success)
+    {
         glGetShaderInfoLog(shadermID, 512, NULL, infoLog);
         std::cout << "ERROR:SHADER::" + std::to_string(type) + "::COMPILATION_FAILED\n" << infoLog << std::endl;
         glDeleteShader(shadermID);
@@ -54,15 +59,18 @@ unsigned int Shader::compileShader(const std::string &source, unsigned int type)
     return shadermID; 
 }
 
-shaderSource Shader::parseShader(const std::string &filePath){
+shaderSource Shader::parseShader(const std::string &filePath)
+{
 
-    enum class ShaderType{
+    enum class ShaderType
+    {
         NONE = -1, VERTEX = 0, FRAGMENT = 1
     };
 
     ShaderType type = ShaderType::NONE;
     std::ifstream stream(filePath); //gets current input stream
-    if(!stream){
+    if(!stream)
+    {
         std::cout << "ERROR::CANNOT FIND FILE" << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -70,43 +78,55 @@ shaderSource Shader::parseShader(const std::string &filePath){
     std::stringstream ss[2];
 
    
-    while(getline(stream, line)){
-    
-        if(line.find("#shader") != std::string::npos){ //finds "#shader" in file
-           if(line.find("vertexShader") != std::string::npos){ //the current line holds "vertexShader" set type 
+    while(getline(stream, line))
+    {
+        //finds "#shader" in file
+        if(line.find("#shader") != std::string::npos)
+        { 
+            //the current line holds "vertexShader" set type 
+           if(line.find("vertexShader") != std::string::npos)
+           {   
                type = ShaderType::VERTEX;
            }
-           else if(line.find("fragmentShader") != std::string::npos){//the current line holds "fragmentShader" set type 
+           //the current line holds "fragmentShader" set type
+           else if(line.find("fragmentShader") != std::string::npos)
+           { 
                type = ShaderType::FRAGMENT;
            }    
         }
-        else{
-            ss[(int)type] << line << '\n'; //push the line into the given array based on the index
+        //push the line into the given array based on the index
+        else
+        {
+            ss[(int)type] << line << '\n'; 
         }
     }
 
     return {ss[0].str(), ss[1].str()};
 }
 
-void Shader::setVec4(const char* location, glm::vec4 uniform){
+void Shader::setVec4(const char* location, glm::vec4 uniform)
+{
     int result = glGetUniformLocation(m_ID, location);
     assert(result != -1);
     glUniform4fv(result, 1, &uniform[0]);
 }
 
-void Shader::setVec3(const char* location, glm::vec3 uniform){
+void Shader::setVec3(const char* location, glm::vec3 uniform)
+{
     int result = glGetUniformLocation(m_ID, location);
     assert(result != -1);
     glUniform3fv(result, 1, &uniform[0]);
 }
 
-void Shader::setMat4(const char* location, glm::mat4 uniform){
+void Shader::setMat4(const char* location, glm::mat4 uniform)
+{
     int result = glGetUniformLocation(m_ID, location);
     assert(result != -1);
     glUniformMatrix4fv(result, 1, GL_FALSE, &uniform[0][0]);
 }
 
-void Shader::setInt(const char* location, int uniform){
+void Shader::setInt(const char* location, int uniform)
+{
     int result = glGetUniformLocation(m_ID, location);
     assert(result != -1);
     glUniform1i(result, uniform);

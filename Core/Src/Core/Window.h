@@ -5,8 +5,8 @@
 #include <string>
 #include <iostream>
 
-
-class Window{
+class Window
+{
     public:
         Window(const std::string& label, uint32_t width, uint32_t height);
         ~Window();

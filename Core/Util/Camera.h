@@ -6,7 +6,8 @@
 #include "../Libs/glm/gtc/type_ptr.hpp"
 #include "../Src/OpenGL/OpenglBuild.h"
 
-class Camera{
+class Camera
+{
     public:
         Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up, float speed);
         void move(GLFWwindow **win, float dt);

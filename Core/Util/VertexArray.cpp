@@ -20,11 +20,13 @@ void VertexArray::unBind()
     glBindVertexArray(0);
 }
 
-void VertexArray::setAttribPointer(uint32_t location, uint32_t byteSize, uint32_t type, bool normalized, uint32_t stride, void* start, bool instanced){
+void VertexArray::setAttribPointer(uint32_t location, uint32_t byteSize, uint32_t type, bool normalized, uint32_t stride, void* start, bool instanced)
+{
     glEnableVertexAttribArray(location);
     glVertexAttribPointer(location, byteSize, type, normalized, stride, start);
 
-    if(instanced){
+    if(instanced)
+    {
         glVertexAttribDivisor(location, 1);
     }
 }

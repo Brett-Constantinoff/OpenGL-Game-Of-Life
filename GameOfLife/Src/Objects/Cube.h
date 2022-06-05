@@ -4,14 +4,14 @@
 #include "RenderObject.h"
 #include <vector>
 #include <iostream>
-#include <limits>
 
 #define CUBE_INDEX_COUNT 24
 #define CUBE_VERTEX_COUNT 36
 #define MAX_CUBES 20000
 #define PLATFORM_CUBES 10000
 
-class Cube : public RenderObject{
+class Cube : public RenderObject
+{
     public:
         Cube();
         virtual ~Cube();
@@ -31,7 +31,6 @@ class Cube : public RenderObject{
         bool instanceExists(glm::vec3 position);
         void removeInstance(glm::vec3 position);
         void removeCells();
-
 
     private:
         void removePosition(int index);

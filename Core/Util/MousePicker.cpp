@@ -1,6 +1,7 @@
 #include "MousePicker.h"
 
-MousePicker::MousePicker(float clickSpeed) : m_clickSpeed{clickSpeed}
+MousePicker::MousePicker(float clickSpeed) :
+m_clickSpeed{clickSpeed}
 {
 
 }

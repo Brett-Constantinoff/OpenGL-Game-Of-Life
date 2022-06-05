@@ -3,13 +3,15 @@
 
 #include <vector>
 #include "Layer.h"
+#include "Window.h"
 
-class LayerStack{
+class LayerStack
+{
     public:
         LayerStack();
         ~LayerStack();
 
-        void push(Layer* layer);
+        void push(Layer* layer, Window* win);
         void pop();
 
         std::vector<Layer*>::iterator begin() {
@@ -21,7 +23,6 @@ class LayerStack{
 
         private:
             std::vector<Layer*> m_layers;
-           
 };
 
 #endif

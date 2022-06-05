@@ -6,7 +6,8 @@
 #include "GameOfLifeLayer.h"
 
 
-class GameOfLife : public Application{
+class GameOfLife : public Application
+{
     public:
         GameOfLife(const std::string& label);
 };

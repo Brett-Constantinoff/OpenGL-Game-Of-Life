@@ -9,7 +9,8 @@
 #include "../ImGui/ImguiLayer.h"
 
 
-class Application{
+class Application
+{
     public:
         Application(const std::string& label = "Application", uint32_t width = 1080, uint32_t height = 720);
         virtual ~Application() = 0;

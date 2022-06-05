@@ -4,12 +4,14 @@
 #include <string>
 #include "../Libs/glm/glm.hpp"
 
-struct shaderSource{
+struct shaderSource
+{
     std::string vertexSource;
     std::string fragmentSource;
 };
 
-class Shader{
+class Shader
+{
     public:
         Shader(const std::string &filepath);
 
@@ -26,7 +28,5 @@ class Shader{
         unsigned int compileShader(const std::string &source, unsigned int type); 
         
 };
-
-
 
 #endif

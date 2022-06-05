@@ -2,10 +2,13 @@
 
 
 Camera::Camera(glm::vec3 position, glm::vec3 front, glm::vec3 up, float speed): 
-    m_position{position}, m_front{front}, m_up{up}, m_speed{speed}{
+m_position{position}, m_front{front}, m_up{up}, m_speed{speed}
+{
+    
 };
 
-void Camera::move(GLFWwindow **win, float dt){
+void Camera::move(GLFWwindow **win, float dt)
+{
     m_front.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
     m_front.y = sin(glm::radians(m_pitch));
     m_front.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
@@ -48,15 +51,18 @@ void Camera::move(GLFWwindow **win, float dt){
     }
 }
 
-glm::vec3* Camera::getPos(){
+glm::vec3* Camera::getPos()
+{
     return &m_position;
 }
 
-glm::vec3* Camera::getFront(){
+glm::vec3* Camera::getFront()
+{
     return &m_front;
 }
 
-glm::mat4 *Camera::getView(){
+glm::mat4 *Camera::getView()
+{
     m_view = glm::lookAt(m_position, m_position + m_front, m_up);
     return &m_view;
 }

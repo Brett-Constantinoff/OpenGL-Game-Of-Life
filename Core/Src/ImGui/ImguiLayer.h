@@ -5,18 +5,16 @@
 #include "ImguiBuild.h"
 
 
-class ImguiLayer : public Layer{
+class ImguiLayer : public Layer
+{
     public:
-        ImguiLayer(GLFWwindow* win);
+        ImguiLayer();
         virtual ~ImguiLayer();
 
         void begin();
         void end();
 
-        virtual void onAttach() override;
-    private:
-        GLFWwindow* m_win;
+        virtual void onAttach(Window* win) override;
 };
-
 
 #endif
