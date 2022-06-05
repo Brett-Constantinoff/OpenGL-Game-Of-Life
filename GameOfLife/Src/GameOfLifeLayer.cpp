@@ -45,7 +45,6 @@ void GameOfLifeLayer::onDetach()
 
 void GameOfLifeLayer::onUpdate(float dt, Window* win)
 {
-
 	m_projection = glm::perspective(glm::radians(45.0f), static_cast<float>(win->getWidth()) / static_cast<float>(win->getHeight()), 0.1f, 500.0f);
 	m_view = *m_camera->getView();
 
@@ -53,7 +52,7 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win)
 	m_frameRate << ImGui::GetIO().Framerate << " FPS";
 
 	m_spawnedObjects.str("");
-	m_spawnedObjects << "Objects: " <<  *m_cube->getRenderAmount() - PLATFORM_CUBES;
+	m_spawnedObjects << "Population: " <<  *m_cube->getRenderAmount() - PLATFORM_CUBES;
 
 	m_generation.str("");
 	m_generation << "Generation: " << m_currentGen;
@@ -62,8 +61,9 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win)
 	m_shader->setMat4("uProjection", m_projection);
 	m_shader->setMat4("uView", m_view);
 
-
 	m_mousePicker->getMouseRay(win, m_projection, m_view);
+
+	m_solveTime += dt;
 
 	
 	bool intersect = false;
@@ -88,16 +88,16 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win)
 				if(dt >= m_mousePicker->getClickSpeed())
 				{
 					glm::vec3 cellPosition{m_cube->getPositions()[i].x,  m_cube->getPositions()[i].y + 1.0f, m_cube->getPositions()[i].z};
-
-					int index = m_cube->getIndex(cellPosition);
-					if(index != -1)
+				
+					if(m_cube->instanceExists(cellPosition))
 					{
-						m_cube->removeInstance(index);
+						m_cube->removeInstance(cellPosition);
 					}
 					else
 					{
 						m_cube->addInstance(cellPosition);
 					}
+					m_board->update(cellPosition);
 				}
 			}
 			break;
@@ -113,12 +113,18 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win)
 	{
 		m_cube->removeCells();
 		m_state = State::DEFAULT;
+		m_cube->setGenerationColour({1.0f, 1.0f, 0.0f});
 	}
 
 	if(m_state == State::RUNNING)
 	{
-		m_board->solve(m_cube);
-		m_currentGen++;
+		if(m_solveTime >= 1.5f)
+		{
+			m_board->solve(m_cube);
+			m_cube->setGenerationColour({((double) rand() / (RAND_MAX)), ((double) rand() / (RAND_MAX)), ((double) rand() / (RAND_MAX))});
+			m_currentGen++;
+			m_solveTime = 0.0f; 
+		}
 	}
 	
     glClearColor(0.25f, 0.25f, 0.25f, 1.0);
@@ -148,6 +154,7 @@ void GameOfLifeLayer::onRenderImgui()
 			if(ImGui::MenuItem("Reset Game of Life"))
 			{
 				m_state = State::RESET;
+				m_currentGen = 0;
 			}
 			ImGui::EndMenu();
 		}

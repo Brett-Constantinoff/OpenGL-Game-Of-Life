@@ -19,6 +19,8 @@ void Cube::init()
     m_positions.reserve(MAX_CUBES);
     m_colours.reserve(MAX_CUBES);
 
+    m_genColour = {1.0f, 0.84f, 0.0f};
+
     m_vao = new VertexArray();
     m_vao->bind();
 
@@ -90,7 +92,7 @@ void Cube::init()
             m_positions.push_back(transform);
 			glm::mat4 transformMat = glm::translate(glm::mat4(1.0f), transform);
 			m_transforms.push_back(transformMat);
-			m_colours.push_back(glm::vec3{0.06f, 0.32f, 0.73f});
+			m_colours.push_back(m_standardColour);
 			transform.x += 1.0f;
             m_renderAmount++;
 		}
@@ -159,9 +161,14 @@ const glm::vec3* Cube::getSelectionColour()
     return &m_selectionColour;
 }
 
-const glm::vec3* Cube::getGameOfLifeColour()
+glm::vec3* Cube::getGenerationColour()
 {
-    return &m_gameOfLifeColour;
+    return &m_genColour;
+}
+
+void Cube::setGenerationColour(glm::vec3 colour)
+{
+    m_genColour = colour;
 }
 
 int* Cube::getRenderAmount()
@@ -174,14 +181,20 @@ void Cube::addInstance(glm::vec3 position)
     if(m_renderAmount < MAX_CUBES)
     {
         m_positions.push_back(position);
-        m_colours.push_back(m_gameOfLifeColour);
+        m_colours.push_back(m_genColour);
         m_transforms.push_back(glm::translate(glm::mat4(1.0f), position));
         m_renderAmount++;
     }
 }
 
-void Cube::removeInstance(int index)
+bool Cube::instanceExists(glm::vec3 position)
 {
+    return std::find(m_positions.begin(), m_positions.end(), position) != m_positions.end();
+}
+
+void Cube::removeInstance(glm::vec3 position)
+{
+    int index = std::find(m_positions.begin(), m_positions.end(), position) - m_positions.begin();
     m_positions.erase(m_positions.begin() + index);
     m_colours.erase(m_colours.begin() + index);
     m_transforms.erase(m_transforms.begin() + index);
@@ -199,19 +212,7 @@ void Cube::removeCells()
     }
 }
 
-int Cube::getIndex(glm::vec3 position)
-{
-    for(int i = 0; i < m_renderAmount; i++)
-    {
-        if( m_positions[i].x == position.x && 
-            m_positions[i].y == position.y &&
-            m_positions[i].z == position.z )
-            {
-                return i;
-            }
-    }
-    return -1;
-}
+
 
 
 

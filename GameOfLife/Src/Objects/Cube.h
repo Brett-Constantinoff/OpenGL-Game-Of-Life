@@ -24,12 +24,14 @@ class Cube : public RenderObject{
         glm::vec3* getPositions();
         const glm::vec3* getStandarColour();
         const glm::vec3* getSelectionColour();
-        const glm::vec3* getGameOfLifeColour();
+        glm::vec3* getGenerationColour();
+        void setGenerationColour(glm::vec3 colour);
         int* getRenderAmount();
         void addInstance(glm::vec3 position);
-        void removeInstance(int index);
+        bool instanceExists(glm::vec3 position);
+        void removeInstance(glm::vec3 position);
         void removeCells();
-        int getIndex(glm::vec3 position);
+
 
     private:
         void removePosition(int index);
@@ -43,9 +45,9 @@ class Cube : public RenderObject{
         VertexBuffer* m_colourVbo;
         VertexBuffer* m_transformBuffer;
         int m_renderAmount = 0;
-        const glm::vec3 m_standardColour = {0.06f, 0.32f, 0.73f};
+        const glm::vec3 m_standardColour = {0.75f, 0.75f, 0.75f};
         const glm::vec3 m_selectionColour = {1.0f, 0.32f, 0.73f};
-        const glm::vec3 m_gameOfLifeColour = {1.0f, 1.0f, 0.0f};
+        glm::vec3 m_genColour;
 };
 
 

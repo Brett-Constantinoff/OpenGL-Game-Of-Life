@@ -60,6 +60,7 @@ class GameOfLifeLayer : public Layer
         int m_currentIntersection = 0;
 
         float m_lastClick = 0.0f;
+        float m_solveTime = 0.0f;
 
         State m_state;
 };  

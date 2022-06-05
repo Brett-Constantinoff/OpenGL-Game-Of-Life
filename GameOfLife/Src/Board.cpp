@@ -40,7 +40,32 @@ void Board::update(glm::vec3 position)
 
 void Board::solve(Cube* cube)
 {
-    
+    for(int i = 0; i < m_width; i++)
+    {
+        for(int j = 0; j < m_height; j++)
+        {
+            int index = (i * m_width) + j;
+            glm::vec3 cellPosition{i, 1.0f, j};
+            int status = m_board[index];
+            int n = getNeighbours(index);
+
+            if( n <= 1 && status == 1 )
+            {
+                cube->removeInstance(cellPosition);
+                update(cellPosition);
+            }
+            else if( n >= 4 && status == 1)
+            {
+                cube->removeInstance(cellPosition);
+                update(cellPosition);
+            }
+            else if( n == 3 && status == 0)
+            {
+                cube->addInstance(cellPosition);
+                update(cellPosition);
+            }
+        }
+    }
 }
 
 int Board::getNeighbours(int index)
