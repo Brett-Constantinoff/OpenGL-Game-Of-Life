@@ -1,6 +1,7 @@
 #include "GameOfLife.h"
 
-int main(){
+int main()
+{
     GameOfLife* gameOfLife = new GameOfLife("Game Of Life");
     gameOfLife->start();
     delete gameOfLife;
