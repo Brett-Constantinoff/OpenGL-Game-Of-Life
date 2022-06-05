@@ -127,3 +127,9 @@ int Board::getNeighbours(int index)
     
     return n;
 }
+
+void Board::reset()
+{
+    delete[] m_board;
+    m_board = new int[m_width * m_height]{0};
+}

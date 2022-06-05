@@ -15,6 +15,7 @@ class Board
         void print();
         void update(glm::vec3 position);
         void solve(Cube* cube);
+        void reset();
 
     private:
         int getNeighbours(int index);

@@ -114,6 +114,7 @@ void GameOfLifeLayer::onUpdate(float dt, Window* win)
 		m_cube->removeCells();
 		m_state = State::DEFAULT;
 		m_cube->setGenerationColour({1.0f, 1.0f, 0.0f});
+		m_board->reset();
 	}
 
 	if(m_state == State::RUNNING)
